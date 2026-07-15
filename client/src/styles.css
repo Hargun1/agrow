@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,850&family=Manrope:wght@500;650;750;850&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #071713;
+  color: #dcefe6;
+  font-family: Manrope, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.screen-bg {
+  /* Pexels, Maria Van: free-to-use greenhouse lettuce photo. Swap for final Happhygreenz booth/greenhouse photography when available. */
+  background:
+    linear-gradient(90deg, rgba(7, 23, 19, 0.96) 0%, rgba(7, 23, 19, 0.84) 42%, rgba(7, 23, 19, 0.5) 100%),
+    url("/assets/greenhouse-lettuce.jpg") center / cover no-repeat;
+}
+
+.touch-button {
+  min-height: 64px;
+}
+
+.pulse-ring {
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(184, 227, 111, 0.38);
+  }
+  100% {
+    box-shadow: 0 0 0 18px rgba(184, 227, 111, 0);
+  }
+}
+
+.growth-grid {
+  background-image:
+    linear-gradient(rgba(220, 239, 230, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 239, 230, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.focus-ring {
+  outline: 3px solid transparent;
+  outline-offset: 3px;
+}
+
+.focus-ring:focus-visible {
+  outline-color: #b8e36f;
+}
