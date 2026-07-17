@@ -4,14 +4,18 @@ function smtpReady() {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 }
 
+function smtpPass() {
+  return process.env.SMTP_PASS.replace(/\s+/g, "");
+}
+
 function createTransporter() {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 465),
     secure: String(process.env.SMTP_SECURE || "true") === "true",
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: process.env.SMTP_USER.trim(),
+      pass: smtpPass(),
     },
   });
 }
@@ -72,4 +76,21 @@ export async function sendLeadEmails(lead) {
   }
 
   return true;
+}
+
+export async function sendTestEmail(to = process.env.MAIL_TO || process.env.SMTP_USER) {
+  if (!smtpReady()) {
+    throw new Error("SMTP is not configured");
+  }
+
+  const transporter = createTransporter();
+  await transporter.verify();
+
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER;
+  await transporter.sendMail({
+    from,
+    to,
+    subject: "Happhygreenz SMTP test",
+    text: "SMTP is working for the Happhygreenz kiosk API.",
+  });
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { sendLeadEmails } from "../services/email.js";
+import { sendLeadEmails, sendTestEmail } from "../services/email.js";
 import { listLeads, markLeadEmailSent, saveLead } from "../services/supabase.js";
 
 const router = express.Router();
@@ -57,7 +57,12 @@ router.post("/", async (req, res, next) => {
           lead = await markLeadEmailSent(lead.id);
         }
       } catch (emailError) {
-        console.error("Lead saved, but email failed:", emailError.message);
+        console.error("Lead saved, but email failed:", {
+          code: emailError.code,
+          command: emailError.command,
+          response: emailError.response,
+          message: emailError.message,
+        });
       }
     }
 
@@ -67,6 +72,19 @@ router.post("/", async (req, res, next) => {
       return res.status(200).json({ message: "Lead already synced" });
     }
     return next(error);
+  }
+});
+
+router.post("/test-email", async (req, res, next) => {
+  try {
+    if (!process.env.INTERNAL_API_KEY || req.get("x-api-key") !== process.env.INTERNAL_API_KEY) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    await sendTestEmail(req.body?.to);
+    res.json({ ok: true, message: "Test email sent" });
+  } catch (error) {
+    next(error);
   }
 });
 
