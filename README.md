@@ -1,6 +1,6 @@
 # Happhygreenz Interactive Lead-Gen Kiosk
 
-Offline-tolerant React/Express kiosk for the Happhygreenz trade-show funnel, with Supabase lead storage and automated Gmail SMTP delivery of each captured blueprint result.
+Offline-tolerant React/Express kiosk for the Happhygreenz trade-show funnel, with Supabase lead storage and automated Resend email delivery of each captured blueprint result.
 
 ## Local Setup
 
@@ -26,17 +26,11 @@ Required:
 - `SUPABASE_URL`: Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY`: Supabase server-side secret/service-role key
 
-Gmail SMTP:
+Email:
 
-- `SMTP_HOST=smtp.gmail.com`
-- `SMTP_PORT=465`
-- `SMTP_SECURE=true`
-- `SMTP_USER`: Gmail address
-- `SMTP_PASS`: Gmail app password
+- `RESEND_API_KEY`: Resend API key
 - `MAIL_FROM`: sender label/address
 - `MAIL_TO`: optional internal recipient for lead notifications
-
-Gmail usually requires an app password, not your normal Gmail password.
 
 ## Supabase Setup
 

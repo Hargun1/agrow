@@ -1,44 +1,5 @@
-import dns from "node:dns/promises";
-import nodemailer from "nodemailer";
-
-function smtpReady() {
-  return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
-}
-
-function smtpPass() {
-  return process.env.SMTP_PASS.replace(/\s+/g, "");
-}
-
-async function resolveSmtpHost(host) {
-  if (String(process.env.SMTP_FORCE_IPV4 || "true") !== "true") {
-    return host;
-  }
-
-  try {
-    const addresses = await dns.resolve4(host);
-    return addresses[0] || host;
-  } catch (error) {
-    console.warn("Could not resolve SMTP IPv4 address; using configured host.", error.message);
-    return host;
-  }
-}
-
-async function createTransporter() {
-  const configuredHost = process.env.SMTP_HOST.trim();
-  const host = await resolveSmtpHost(configuredHost);
-
-  return nodemailer.createTransport({
-    host,
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: String(process.env.SMTP_SECURE || "true") === "true",
-    auth: {
-      user: process.env.SMTP_USER.trim(),
-      pass: smtpPass(),
-    },
-    tls: {
-      servername: configuredHost,
-    },
-  });
+function emailReady() {
+  return Boolean(process.env.RESEND_API_KEY && process.env.MAIL_FROM);
 }
 
 function blueprintHtml(lead) {
@@ -62,24 +23,19 @@ function blueprintHtml(lead) {
 }
 
 export async function sendLeadEmails(lead) {
-  if (!smtpReady()) {
-    console.warn("SMTP is not configured; skipping email send.");
+  if (!emailReady()) {
+    console.warn("Resend is not configured; skipping email send.");
     return false;
   }
 
-  const transporter = await createTransporter();
-  const from = process.env.MAIL_FROM || process.env.SMTP_USER;
-
-  await transporter.sendMail({
-    from,
+  await sendEmail({
     to: lead.email,
     subject: "Your Happhygreenz Urban Farm Blueprint",
     html: blueprintHtml(lead),
   });
 
   if (process.env.MAIL_TO) {
-    await transporter.sendMail({
-      from,
+    await sendEmail({
       to: process.env.MAIL_TO,
       subject: `New kiosk lead: ${lead.fullName}`,
       html: `
@@ -99,19 +55,46 @@ export async function sendLeadEmails(lead) {
   return true;
 }
 
-export async function sendTestEmail(to = process.env.MAIL_TO || process.env.SMTP_USER) {
-  if (!smtpReady()) {
-    throw new Error("SMTP is not configured");
+async function sendEmail({ to, subject, html, text }) {
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: process.env.MAIL_FROM,
+      to: Array.isArray(to) ? to : [to],
+      subject,
+      html,
+      text,
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = data.message || data.error || `Resend request failed with status ${response.status}`;
+    const error = new Error(message);
+    error.code = "RESEND_ERROR";
+    error.response = data;
+    throw error;
   }
 
-  const transporter = await createTransporter();
-  await transporter.verify();
+  return data;
+}
 
-  const from = process.env.MAIL_FROM || process.env.SMTP_USER;
-  await transporter.sendMail({
-    from,
+export async function sendTestEmail(to = process.env.MAIL_TO) {
+  if (!emailReady()) {
+    throw new Error("Resend is not configured");
+  }
+
+  if (!to) {
+    throw new Error("MAIL_TO or a test recipient is required");
+  }
+
+  await sendEmail({
     to,
-    subject: "Happhygreenz SMTP test",
-    text: "SMTP is working for the Happhygreenz kiosk API.",
+    subject: "Happhygreenz Resend test",
+    text: "Resend email delivery is working for the Happhygreenz kiosk API.",
   });
 }
