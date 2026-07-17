@@ -19,6 +19,7 @@ function toLead(row) {
     scale: row.scale,
     blueprintName: row.blueprint_name || "",
     estimatedHarvest: row.estimated_harvest || "",
+    submissionDetails: row.submission_details || {},
     timestamp: row.timestamp,
     emailSentAt: row.email_sent_at,
     createdAt: row.created_at,
@@ -39,6 +40,32 @@ function toLeadRow(payload) {
     blueprint_name: payload.blueprintName || "",
     estimated_harvest: payload.estimatedHarvest || "",
     timestamp: payload.timestamp,
+    submission_details: buildSubmissionDetails(payload),
+  };
+}
+
+function buildSubmissionDetails(payload) {
+  return {
+    contact: {
+      fullName: payload.fullName,
+      companyName: payload.companyName || "",
+      whatsappNumber: payload.whatsappNumber,
+      email: payload.email,
+    },
+    quiz: {
+      spaceType: payload.spaceType,
+      primaryGoal: payload.primaryGoal,
+      scale: payload.scale,
+    },
+    blueprint: {
+      name: payload.blueprintName || "",
+      estimatedHarvest: payload.estimatedHarvest || "",
+    },
+    metadata: {
+      localId: payload.localId || null,
+      timestamp: payload.timestamp || null,
+      source: "kiosk",
+    },
   };
 }
 

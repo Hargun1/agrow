@@ -32,12 +32,30 @@ function blueprintHtml(lead) {
         <li><strong>Water efficiency:</strong> Saves up to 95%</li>
         <li><strong>Pesticide-free:</strong> 100% guaranteed</li>
       </ul>
-      <p><strong>Space:</strong> ${lead.spaceType}</p>
-      <p><strong>Goal:</strong> ${lead.primaryGoal}</p>
-      <p><strong>Footprint:</strong> ${lead.scale}</p>
+      ${choicesHtml(lead)}
       <p>Powered by agrowAi, your pocket plant coach using computer vision to guide perfect growth.</p>
     </div>
   `;
+}
+
+function choicesHtml(lead) {
+  return `
+    <div>
+      <h3 style="margin:24px 0 8px;color:#106b3a">Your choices</h3>
+      <p><strong>Space:</strong> ${lead.spaceType}</p>
+      <p><strong>Goal:</strong> ${lead.primaryGoal}</p>
+      <p><strong>Footprint:</strong> ${lead.scale}</p>
+    </div>
+  `;
+}
+
+function choicesText(lead) {
+  return [
+    "Your choices:",
+    `- Space: ${lead.spaceType}`,
+    `- Goal: ${lead.primaryGoal}`,
+    `- Footprint: ${lead.scale}`,
+  ].join("\n");
 }
 
 export async function sendLeadEmails(lead) {
@@ -64,9 +82,18 @@ export async function sendLeadEmails(lead) {
           <p><strong>WhatsApp:</strong> ${lead.whatsappNumber}</p>
           <p><strong>Email:</strong> ${lead.email}</p>
           <p><strong>Blueprint:</strong> ${lead.blueprintName}</p>
-          <p><strong>Scale:</strong> ${lead.scale}</p>
+          ${choicesHtml(lead)}
         </div>
       `,
+      text: [
+        "New Happhygreenz kiosk lead",
+        `Name: ${lead.fullName}`,
+        `Company: ${lead.companyName || "-"}`,
+        `WhatsApp: ${lead.whatsappNumber}`,
+        `Email: ${lead.email}`,
+        `Blueprint: ${lead.blueprintName}`,
+        choicesText(lead),
+      ].join("\n"),
     });
   }
 

@@ -24,14 +24,37 @@ function withTimeout(promise, timeoutMs = 5000) {
 
 export function saveLeadOffline(formData, answers) {
   const blueprint = getBlueprint(answers.scale);
+  const timestamp = new Date().toISOString();
   const localLead = {
     localId: crypto.randomUUID(),
     synced: false,
-    timestamp: new Date().toISOString(),
+    timestamp,
     ...formData,
     ...answers,
     blueprintName: blueprint.hardwareName,
     estimatedHarvest: blueprint.yield,
+    submissionDetails: {
+      contact: {
+        fullName: formData.fullName,
+        companyName: formData.companyName || "",
+        whatsappNumber: formData.whatsappNumber,
+        email: formData.email,
+      },
+      quiz: {
+        spaceType: answers.spaceType,
+        primaryGoal: answers.primaryGoal,
+        scale: answers.scale,
+      },
+      blueprint: {
+        name: blueprint.hardwareName,
+        estimatedHarvest: blueprint.yield,
+      },
+      metadata: {
+        localId: null,
+        timestamp,
+        source: "kiosk",
+      },
+    },
   };
 
   writeLeads([...readLeads(), localLead]);

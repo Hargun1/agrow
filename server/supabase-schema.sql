@@ -12,11 +12,15 @@ create table if not exists public.leads (
   scale text not null,
   blueprint_name text not null default '',
   estimated_harvest text not null default '',
+  submission_details jsonb not null default '{}'::jsonb,
   timestamp timestamptz not null default now(),
   email_sent_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.leads
+add column if not exists submission_details jsonb not null default '{}'::jsonb;
 
 create index if not exists leads_created_at_idx on public.leads (created_at desc);
 create index if not exists leads_email_idx on public.leads (email);

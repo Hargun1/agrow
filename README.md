@@ -42,6 +42,9 @@ If you want to use Brevo, set `EMAIL_PROVIDER=brevo` and fill the Brevo values. 
 
 Run the SQL in `server/supabase-schema.sql` in the Supabase SQL editor. The backend uses the server-side Supabase key, so do not put `SUPABASE_SERVICE_ROLE_KEY` in the frontend environment.
 
+Lead records are stored with flat columns for filtering plus a `submission_details` JSONB field that keeps the full contact, quiz, and blueprint payload together.
+If the table already exists, rerun the schema SQL so the `submission_details` column is added in place.
+
 ## Offline Sync
 
 On lead submit, the client immediately saves the lead to `localStorage` with `synced: false`, then attempts `POST /api/leads` with a 5 second timeout. If the request fails, the kiosk advances anyway. A global sync service retries unsynced leads every 20 seconds and whenever the browser comes back online.
