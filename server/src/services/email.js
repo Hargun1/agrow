@@ -1,3 +1,4 @@
+import dns from "node:dns/promises";
 import nodemailer from "nodemailer";
 
 function smtpReady() {
@@ -8,14 +9,34 @@ function smtpPass() {
   return process.env.SMTP_PASS.replace(/\s+/g, "");
 }
 
-function createTransporter() {
+async function resolveSmtpHost(host) {
+  if (String(process.env.SMTP_FORCE_IPV4 || "true") !== "true") {
+    return host;
+  }
+
+  try {
+    const addresses = await dns.resolve4(host);
+    return addresses[0] || host;
+  } catch (error) {
+    console.warn("Could not resolve SMTP IPv4 address; using configured host.", error.message);
+    return host;
+  }
+}
+
+async function createTransporter() {
+  const configuredHost = process.env.SMTP_HOST.trim();
+  const host = await resolveSmtpHost(configuredHost);
+
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
+    host,
     port: Number(process.env.SMTP_PORT || 465),
     secure: String(process.env.SMTP_SECURE || "true") === "true",
     auth: {
       user: process.env.SMTP_USER.trim(),
       pass: smtpPass(),
+    },
+    tls: {
+      servername: configuredHost,
     },
   });
 }
@@ -46,7 +67,7 @@ export async function sendLeadEmails(lead) {
     return false;
   }
 
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
   const from = process.env.MAIL_FROM || process.env.SMTP_USER;
 
   await transporter.sendMail({
@@ -83,7 +104,7 @@ export async function sendTestEmail(to = process.env.MAIL_TO || process.env.SMTP
     throw new Error("SMTP is not configured");
   }
 
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
   await transporter.verify();
 
   const from = process.env.MAIL_FROM || process.env.SMTP_USER;
