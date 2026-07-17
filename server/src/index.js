@@ -1,7 +1,6 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import mongoose from "mongoose";
 import leadRoutes from "./routes/leads.js";
 
 dotenv.config();
@@ -30,11 +29,10 @@ app.use((err, _req, res, _next) => {
 });
 
 async function start() {
-  if (!process.env.MONGO_URI) {
-    throw new Error("MONGO_URI is required");
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required");
   }
 
-  await mongoose.connect(process.env.MONGO_URI);
   app.listen(port, () => {
     console.log(`Happhygreenz kiosk API listening on ${port}`);
   });

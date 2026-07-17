@@ -1,6 +1,6 @@
 import express from "express";
-import Lead from "../models/Lead.js";
 import { sendLeadEmails } from "../services/email.js";
+import { listLeads, markLeadEmailSent, saveLead } from "../services/supabase.js";
 
 const router = express.Router();
 
@@ -48,18 +48,13 @@ router.post("/", async (req, res, next) => {
       timestamp: req.body.timestamp ? new Date(req.body.timestamp) : new Date(),
     };
 
-    const lead = await Lead.findOneAndUpdate(
-      payload.localId ? { localId: payload.localId } : { email: payload.email, timestamp: payload.timestamp },
-      { $setOnInsert: payload },
-      { new: true, upsert: true, runValidators: true },
-    );
+    let lead = await saveLead(payload);
 
     if (!lead.emailSentAt) {
       try {
         const sent = await sendLeadEmails(lead);
         if (sent) {
-          lead.emailSentAt = new Date();
-          await lead.save();
+          lead = await markLeadEmailSent(lead.id);
         }
       } catch (emailError) {
         console.error("Lead saved, but email failed:", emailError.message);
@@ -68,7 +63,7 @@ router.post("/", async (req, res, next) => {
 
     return res.status(201).json(lead);
   } catch (error) {
-    if (error.code === 11000) {
+    if (error.code === "23505") {
       return res.status(200).json({ message: "Lead already synced" });
     }
     return next(error);
@@ -78,7 +73,7 @@ router.post("/", async (req, res, next) => {
 // MVP-only internal check. Secure this route before any public deployment.
 router.get("/", async (_req, res, next) => {
   try {
-    const leads = await Lead.find().sort({ createdAt: -1 }).limit(200);
+    const leads = await listLeads();
     res.json(leads);
   } catch (error) {
     next(error);
