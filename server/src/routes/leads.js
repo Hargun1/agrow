@@ -29,6 +29,8 @@ function validateLead(body) {
 
 router.post("/", async (req, res, next) => {
   try {
+    console.log("Incoming body:", req.body);
+
     const validationError = validateLead(req.body);
     if (validationError) {
       return res.status(400).json({ message: validationError });
@@ -49,6 +51,7 @@ router.post("/", async (req, res, next) => {
     };
 
     let lead = await saveLead(payload);
+    console.log("Lead object:", lead);
 
     if (!lead.emailSentAt) {
       try {
@@ -64,6 +67,8 @@ router.post("/", async (req, res, next) => {
           message: emailError.message,
         });
       }
+    } else {
+      console.log("Skipping emails; already sent at:", lead.emailSentAt);
     }
 
     return res.status(201).json(lead);

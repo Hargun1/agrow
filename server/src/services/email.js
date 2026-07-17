@@ -58,19 +58,41 @@ function choicesText(lead) {
   ].join("\n");
 }
 
+function blueprintText(lead) {
+  return [
+    "Your Happhygreenz Urban Farm Blueprint",
+    `Hello ${lead.fullName.split(" ")[0]},`,
+    "",
+    "Your kiosk result is ready.",
+    `Blueprint: ${lead.blueprintName}`,
+    `Estimated harvest: ${lead.estimatedHarvest}`,
+    "Water efficiency: Saves up to 95%",
+    "Pesticide-free: 100% guaranteed",
+    "",
+    choicesText(lead),
+    "",
+    "Powered by agrowAi, your pocket plant coach using computer vision to guide perfect growth.",
+  ].join("\n");
+}
+
 export async function sendLeadEmails(lead) {
   if (!emailReady()) {
     console.warn("Email provider is not configured; skipping email send.");
     return false;
   }
 
+  console.log("Calling sendLeadEmails");
+  console.log("Sending customer email to:", lead.email);
+
   await sendEmail({
     to: lead.email,
     subject: "Your Happhygreenz Urban Farm Blueprint",
     html: blueprintHtml(lead),
+    text: blueprintText(lead),
   });
 
   if (process.env.MAIL_TO) {
+    console.log("Sending internal notification to:", process.env.MAIL_TO);
     await sendEmail({
       to: process.env.MAIL_TO,
       subject: `New kiosk lead: ${lead.fullName}`,
@@ -143,24 +165,31 @@ async function sendResendEmail({ to, subject, html, text }) {
 }
 
 async function sendBrevoEmail({ to, subject, html, text }) {
+  const payload = {
+    sender: {
+      email: process.env.BREVO_SENDER_EMAIL,
+      name: process.env.BREVO_SENDER_NAME || "Happhygreenz Kiosk",
+    },
+    to: Array.isArray(to)
+      ? to.map((recipient) => ({ email: recipient }))
+      : [{ email: to }],
+    subject,
+  };
+
+  // Only include defined body fields. Brevo accepts html and/or text; omitting
+  // empty keys avoids sending htmlContent/textContent as undefined.
+  if (html) payload.htmlContent = html;
+  if (text) payload.textContent = text;
+
+  console.log("Brevo request payload:", JSON.stringify(payload, null, 2));
+
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
       "api-key": process.env.BREVO_API_KEY,
       "content-type": "application/json",
     },
-    body: JSON.stringify({
-      sender: {
-        email: process.env.BREVO_SENDER_EMAIL,
-        name: process.env.BREVO_SENDER_NAME || "Happhygreenz Kiosk",
-      },
-      to: Array.isArray(to)
-        ? to.map((recipient) => ({ email: recipient }))
-        : [{ email: to }],
-      subject,
-      htmlContent: html,
-      textContent: text,
-    }),
+    body: JSON.stringify(payload),
   });
 
   const data = await response.json().catch(() => ({}));
@@ -172,6 +201,7 @@ async function sendBrevoEmail({ to, subject, html, text }) {
     throw error;
   }
 
+  console.log("Brevo response:", JSON.stringify(data));
   return data;
 }
 
