@@ -58,23 +58,6 @@ function choicesText(lead) {
   ].join("\n");
 }
 
-function blueprintText(lead) {
-  return [
-    "Your Happhygreenz Urban Farm Blueprint",
-    `Hello ${lead.fullName.split(" ")[0]},`,
-    "",
-    "Your kiosk result is ready.",
-    `Blueprint: ${lead.blueprintName}`,
-    `Estimated harvest: ${lead.estimatedHarvest}`,
-    "Water efficiency: Saves up to 95%",
-    "Pesticide-free: 100% guaranteed",
-    "",
-    choicesText(lead),
-    "",
-    "Powered by agrowAi, your pocket plant coach using computer vision to guide perfect growth.",
-  ].join("\n");
-}
-
 export async function sendLeadEmails(lead) {
   if (!emailReady()) {
     console.warn("Email provider is not configured; skipping email send.");
@@ -85,7 +68,6 @@ export async function sendLeadEmails(lead) {
     to: lead.email,
     subject: "Your Happhygreenz Urban Farm Blueprint",
     html: blueprintHtml(lead),
-    text: blueprintText(lead),
   });
 
   if (process.env.MAIL_TO) {
