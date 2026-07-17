@@ -15,6 +15,13 @@ app.use(
 );
 app.use(express.json({ limit: "1mb" }));
 
+app.get("/", (_req, res) => {
+  res.json({
+    success: true,
+    message: "Happhygreenz API is running",
+  });
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
