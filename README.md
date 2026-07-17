@@ -1,6 +1,6 @@
 # Happhygreenz Interactive Lead-Gen Kiosk
 
-Offline-tolerant React/Express kiosk for the Happhygreenz trade-show funnel, with Supabase lead storage and automated Resend email delivery of each captured blueprint result.
+Offline-tolerant React/Express kiosk for the Happhygreenz trade-show funnel, with Supabase lead storage and automated email delivery of each captured blueprint result.
 
 ## Local Setup
 
@@ -28,9 +28,15 @@ Required:
 
 Email:
 
+- `EMAIL_PROVIDER`: `brevo` or `resend`; if omitted, the server auto-detects Brevo first, then Resend
+- `BREVO_API_KEY`: Brevo API key
+- `BREVO_SENDER_EMAIL`: verified Brevo sender email
+- `BREVO_SENDER_NAME`: optional sender name shown to recipients
 - `RESEND_API_KEY`: Resend API key
 - `MAIL_FROM`: sender label/address
 - `MAIL_TO`: optional internal recipient for lead notifications
+
+If you want to use Brevo, set `EMAIL_PROVIDER=brevo` and fill the Brevo values. If you want to keep Resend, set `EMAIL_PROVIDER=resend` and keep `RESEND_API_KEY` plus `MAIL_FROM`.
 
 ## Supabase Setup
 

@@ -1,5 +1,23 @@
+function getEmailProvider() {
+  const requestedProvider = process.env.EMAIL_PROVIDER?.toLowerCase();
+
+  if (requestedProvider === "brevo" || requestedProvider === "resend") {
+    return requestedProvider;
+  }
+
+  if (process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL) {
+    return "brevo";
+  }
+
+  if (process.env.RESEND_API_KEY && process.env.MAIL_FROM) {
+    return "resend";
+  }
+
+  return null;
+}
+
 function emailReady() {
-  return Boolean(process.env.RESEND_API_KEY && process.env.MAIL_FROM);
+  return Boolean(getEmailProvider());
 }
 
 function blueprintHtml(lead) {
@@ -24,7 +42,7 @@ function blueprintHtml(lead) {
 
 export async function sendLeadEmails(lead) {
   if (!emailReady()) {
-    console.warn("Resend is not configured; skipping email send.");
+    console.warn("Email provider is not configured; skipping email send.");
     return false;
   }
 
@@ -56,6 +74,20 @@ export async function sendLeadEmails(lead) {
 }
 
 async function sendEmail({ to, subject, html, text }) {
+  const provider = getEmailProvider();
+
+  if (provider === "brevo") {
+    return sendBrevoEmail({ to, subject, html, text });
+  }
+
+  if (provider === "resend") {
+    return sendResendEmail({ to, subject, html, text });
+  }
+
+  throw new Error("Email provider is not configured");
+}
+
+async function sendResendEmail({ to, subject, html, text }) {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -83,9 +115,42 @@ async function sendEmail({ to, subject, html, text }) {
   return data;
 }
 
+async function sendBrevoEmail({ to, subject, html, text }) {
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: {
+        email: process.env.BREVO_SENDER_EMAIL,
+        name: process.env.BREVO_SENDER_NAME || "Happhygreenz Kiosk",
+      },
+      to: Array.isArray(to)
+        ? to.map((recipient) => ({ email: recipient }))
+        : [{ email: to }],
+      subject,
+      htmlContent: html,
+      textContent: text,
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = data.message || data.code || `Brevo request failed with status ${response.status}`;
+    const error = new Error(message);
+    error.code = "BREVO_ERROR";
+    error.response = data;
+    throw error;
+  }
+
+  return data;
+}
+
 export async function sendTestEmail(to = process.env.MAIL_TO) {
   if (!emailReady()) {
-    throw new Error("Resend is not configured");
+    throw new Error("Email provider is not configured");
   }
 
   if (!to) {
@@ -94,7 +159,7 @@ export async function sendTestEmail(to = process.env.MAIL_TO) {
 
   await sendEmail({
     to,
-    subject: "Happhygreenz Resend test",
-    text: "Resend email delivery is working for the Happhygreenz kiosk API.",
+    subject: "Happhygreenz email test",
+    text: "Email delivery is working for the Happhygreenz kiosk API.",
   });
 }
