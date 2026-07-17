@@ -50,7 +50,7 @@ export default function LeadCaptureScreen() {
   }
 
   return (
-    <section className="growth-grid grid h-full items-stretch px-8 py-8 md:grid-cols-[0.82fr_1.18fr] lg:px-14">
+    <section className="growth-grid grid min-h-dvh items-stretch px-5 py-6 sm:px-8 md:h-full md:min-h-0 md:grid-cols-[0.82fr_1.18fr] md:py-8 lg:px-14">
       <aside className="relative hidden overflow-hidden border-r border-mist/14 md:block">
         <img
           className="absolute inset-0 h-full w-full object-cover"
@@ -82,11 +82,11 @@ export default function LeadCaptureScreen() {
 
       <form
         onSubmit={submit}
-        className="ml-auto flex w-full max-w-3xl flex-col justify-center bg-paper p-8 text-reservoir shadow-field"
+        className="ml-auto flex w-full max-w-3xl flex-col justify-center bg-paper p-5 text-reservoir shadow-field sm:p-8"
       >
-        <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.18em] text-vein">Lead capture</p>
-        <h2 className="font-display text-5xl font-black leading-tight text-reservoir">Your custom blueprint is ready.</h2>
-        <p className="mb-8 mt-3 text-xl font-bold text-nori/74">Where should we send the result?</p>
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.16em] text-vein sm:text-sm sm:tracking-[0.18em]">Lead capture</p>
+        <h2 className="font-display text-3xl font-black leading-tight text-reservoir sm:text-5xl">Your custom blueprint is ready.</h2>
+        <p className="mb-6 mt-3 text-lg font-bold text-nori/74 sm:mb-8 sm:text-xl">Where should we send the result?</p>
 
         <div className="grid gap-4 md:grid-cols-2">
           <Field
@@ -130,7 +130,7 @@ export default function LeadCaptureScreen() {
 
         <button
           type="submit"
-          className="focus-ring touch-button mt-7 w-full rounded-[4px] bg-reservoir px-8 py-5 text-2xl font-black text-paper transition hover:bg-nori active:scale-[0.99]"
+          className="focus-ring touch-button mt-5 w-full rounded-[4px] bg-reservoir px-5 py-4 text-lg font-black text-paper transition hover:bg-nori active:scale-[0.99] sm:mt-7 sm:px-8 sm:py-5 sm:text-2xl"
         >
           Reveal My Blueprint
         </button>
@@ -147,7 +147,7 @@ function Field({ icon: Icon, label, error, ...props }) {
         {Icon ? <Icon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-vein" size={24} /> : null}
         <input
           {...props}
-          className={`focus-ring touch-button w-full rounded-[4px] border bg-white px-4 text-xl font-bold text-reservoir outline-none focus:border-vein ${
+          className={`focus-ring touch-button w-full rounded-[4px] border bg-white px-4 text-base font-bold text-reservoir outline-none focus:border-vein sm:text-xl ${
             Icon ? "pl-12" : ""
           } ${error ? "border-red-500" : "border-nori/18"}`}
         />

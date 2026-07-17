@@ -5,27 +5,27 @@ export default function AttractScreen() {
   const { setScreen } = useKiosk();
 
   return (
-    <section className="growth-grid grid h-full items-stretch overflow-hidden md:grid-cols-[1.08fr_0.92fr]">
-      <div className="flex flex-col justify-between px-10 py-9 lg:px-16 lg:py-12">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-[6px] border border-signal/40 bg-signal/12">
-            <Sprout className="text-signal" size={29} />
+    <section className="growth-grid grid min-h-dvh items-stretch md:h-full md:min-h-0 md:grid-cols-[1.08fr_0.92fr] md:overflow-hidden">
+      <div className="flex min-h-dvh flex-col justify-between gap-10 px-5 py-6 sm:px-8 md:min-h-0 md:px-10 md:py-9 lg:px-16 lg:py-12">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[6px] border border-signal/40 bg-signal/12 sm:h-14 sm:w-14">
+            <Sprout className="text-signal" size={26} />
           </div>
           <div>
-            <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-waterline">Happhygreenz</p>
-            <p className="text-lg font-bold text-mist">Precision urban farming systems</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-waterline sm:text-sm sm:tracking-[0.18em]">Happhygreenz</p>
+            <p className="text-sm font-bold text-mist sm:text-lg">Precision urban farming systems</p>
           </div>
         </div>
 
         <div className="max-w-4xl">
-          <p className="mb-5 inline-flex items-center gap-2 border-l-4 border-signal bg-reservoir/70 px-4 py-3 text-lg font-extrabold text-mist">
-            <Droplets className="text-waterline" size={24} />
+          <p className="mb-4 inline-flex items-center gap-2 border-l-4 border-signal bg-reservoir/70 px-3 py-2 text-sm font-extrabold text-mist sm:mb-5 sm:px-4 sm:py-3 sm:text-lg">
+            <Droplets className="shrink-0 text-waterline" size={22} />
             Hydroponic hardware matched to your space
           </p>
-          <h1 className="font-display text-6xl font-black leading-[0.98] tracking-normal text-paper lg:text-8xl">
+          <h1 className="font-display text-4xl font-black leading-[1.02] tracking-normal text-paper sm:text-5xl md:text-6xl lg:text-8xl">
             Calculate Your Tech-Farming ROI in 30 Seconds.
           </h1>
-          <p className="mt-7 max-w-2xl text-2xl font-semibold leading-snug text-mist/86">
+          <p className="mt-5 max-w-2xl text-lg font-semibold leading-snug text-mist/86 sm:mt-7 sm:text-2xl">
             Choose your space, growth goal, and footprint. We will show the system, yield range, and farm workflow that fits.
           </p>
         </div>
@@ -33,10 +33,10 @@ export default function AttractScreen() {
         <button
           type="button"
           onClick={() => setScreen("quiz")}
-          className="pulse-ring focus-ring touch-button flex w-fit items-center gap-4 rounded-[4px] bg-signal px-9 py-5 text-2xl font-black text-reservoir transition active:scale-[0.99]"
+          className="pulse-ring focus-ring touch-button flex w-full items-center justify-center gap-3 rounded-[4px] bg-signal px-5 py-4 text-center text-base font-black text-reservoir transition active:scale-[0.99] sm:w-fit sm:gap-4 sm:px-9 sm:py-5 sm:text-2xl"
         >
           Tap to Begin Your Green Blueprint
-          <ArrowRight size={30} />
+          <ArrowRight className="shrink-0" size={28} />
         </button>
       </div>
 

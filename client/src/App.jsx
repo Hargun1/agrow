@@ -25,11 +25,11 @@ function Shell() {
   }, []);
 
   return (
-    <main className="screen-bg h-screen w-screen overflow-hidden">
+    <main className="screen-bg min-h-dvh w-full overflow-x-hidden md:h-screen md:overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={screen}
-          className="h-full w-full"
+          className="min-h-dvh w-full md:h-full"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -18 }}

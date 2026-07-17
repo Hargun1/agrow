@@ -19,7 +19,7 @@ body {
   background: #071713;
   color: #dcefe6;
   font-family: Manrope, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 button,
@@ -35,7 +35,13 @@ input {
 }
 
 .touch-button {
-  min-height: 64px;
+  min-height: 56px;
+}
+
+@media (min-width: 768px) {
+  .touch-button {
+    min-height: 64px;
+  }
 }
 
 .pulse-ring {
