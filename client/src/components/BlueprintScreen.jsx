@@ -83,7 +83,7 @@ export default function BlueprintScreen() {
         className="focus-ring touch-button mt-5 flex w-full items-center justify-center gap-3 rounded-[4px] bg-signal px-5 py-4 text-base font-black text-reservoir active:scale-[0.99] sm:px-8 sm:text-2xl"
       >
         <RotateCcw size={28} />
-        Blueprint sent to your email! Tap to Reset
+        Blueprint sent to your email! 
       </button>
     </section>
   );
