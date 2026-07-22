@@ -28,10 +28,7 @@ input {
 }
 
 .screen-bg {
-  /* Pexels, Maria Van: free-to-use greenhouse lettuce photo. Swap for final Happhygreenz booth/greenhouse photography when available. */
-  background:
-    linear-gradient(90deg, rgba(7, 23, 19, 0.96) 0%, rgba(7, 23, 19, 0.84) 42%, rgba(7, 23, 19, 0.5) 100%),
-    url("/assets/greenhouse-lettuce.jpg") center / cover no-repeat;
+  background: radial-gradient(circle at center, #12382b 0%, #071713 100%);
 }
 
 .touch-button {

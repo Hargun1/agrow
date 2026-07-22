@@ -50,45 +50,24 @@ export default function LeadCaptureScreen() {
   }
 
   return (
-    <section className="growth-grid grid min-h-dvh items-stretch px-5 py-6 sm:px-8 md:h-full md:min-h-0 md:grid-cols-[0.82fr_1.18fr] md:py-8 lg:px-14">
-      <aside className="relative hidden overflow-hidden border-r border-mist/14 md:block">
-        <img
-          className="absolute inset-0 h-full w-full object-cover"
-          src={blueprint.hardwareImage}
-          alt=""
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-reservoir via-reservoir/78 to-reservoir/28" />
-        <div className="absolute inset-0 bg-gradient-to-r from-reservoir/92 via-reservoir/48 to-transparent" />
-
-        <div className="relative flex h-full flex-col justify-between p-8 lg:p-10">
-          <div>
-          <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-waterline">Blueprint ready</p>
-          <h1 className="mt-5 font-display text-6xl font-black leading-[1] text-paper">
-            Send the result to the right inbox.
-          </h1>
-          </div>
-
-          <div className="space-y-5">
-            <div className="border-l-4 border-signal bg-reservoir/76 p-5 backdrop-blur-sm">
-              <p className="text-xl font-black text-paper">{answers.scale || "Selected farm footprint"}</p>
-              <p className="mt-2 text-lg font-semibold text-mist/84">{answers.primaryGoal || "Growth goal captured"}</p>
-            </div>
-            <p className="max-w-md text-lg font-semibold leading-relaxed text-mist/82">
-              The lead is saved on this tablet first, then synced to the database and emailed when connectivity is available.
-            </p>
-          </div>
-        </div>
-      </aside>
+    <section className="flex min-h-dvh flex-col items-center justify-center bg-paper px-5 py-12 sm:px-8">
+      <div className="w-full max-w-2xl text-center">
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.16em] text-vein sm:text-sm sm:tracking-[0.18em]">
+          Blueprint Ready
+        </p>
+        <h1 className="font-display text-4xl font-black leading-tight text-reservoir sm:text-5xl lg:text-6xl">
+          Your sustainable growth journey starts here.
+        </h1>
+        <p className="mx-auto mt-4 max-w-xl text-lg font-semibold text-nori/80 sm:text-xl">
+          Join thousands who have switched to 100% pesticide-free, hyper-local farming. Where should we send your custom {answers.scale || "farming"} blueprint?
+        </p>
+      </div>
 
       <form
         onSubmit={submit}
-        className="ml-auto flex w-full max-w-3xl flex-col justify-center bg-paper p-5 text-reservoir shadow-field sm:p-8"
+        className="mt-10 w-full max-w-3xl rounded-xl bg-white p-6 shadow-field sm:p-10"
       >
-        <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.16em] text-vein sm:text-sm sm:tracking-[0.18em]">Lead capture</p>
-        <h2 className="font-display text-3xl font-black leading-tight text-reservoir sm:text-5xl">Your custom blueprint is ready.</h2>
-        <p className="mb-6 mt-3 text-lg font-bold text-nori/74 sm:mb-8 sm:text-xl">Where should we send the result?</p>
-
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
           <Field
             icon={UserRound}
             label="Full Name"
@@ -97,13 +76,15 @@ export default function LeadCaptureScreen() {
             onChange={updateField}
             error={errors.fullName}
             required
+            placeholder="John Doe"
           />
           <Field
             icon={Building2}
-            label="Company Name / Designation"
+            label="Company / Farm Name"
             name="companyName"
             value={lead.companyName}
             onChange={updateField}
+            placeholder="Green Acres"
           />
           <Field
             icon={Phone}
@@ -115,6 +96,7 @@ export default function LeadCaptureScreen() {
             maxLength={10}
             error={errors.whatsappNumber}
             required
+            placeholder="9876543210"
           />
           <Field
             icon={Mail}
@@ -125,15 +107,31 @@ export default function LeadCaptureScreen() {
             inputMode="email"
             error={errors.email}
             required
+            placeholder="john@example.com"
           />
         </div>
 
         <button
           type="submit"
-          className="focus-ring touch-button mt-5 w-full rounded-[4px] bg-reservoir px-5 py-4 text-lg font-black text-paper transition hover:bg-nori active:scale-[0.99] sm:mt-7 sm:px-8 sm:py-5 sm:text-2xl"
+          className="focus-ring touch-button w-full rounded-lg bg-vein px-6 py-4 text-xl font-black text-white transition hover:bg-nori active:scale-[0.99] sm:py-5 sm:text-2xl"
         >
           Reveal My Blueprint
         </button>
+
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-nori/60">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-signal"></span>
+            100% Pesticide Free
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-signal"></span>
+            Locally Grown
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-signal"></span>
+            Sustainable Future
+          </span>
+        </div>
       </form>
     </section>
   );
